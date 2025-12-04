@@ -1,0 +1,301 @@
+{
+  "info": {
+    "name": "Agenda360Lite Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "date", "value": "2025-12-01" },
+    { "key": "clientId", "value": "1" },
+    { "key": "serviceId", "value": "1" },
+    { "key": "appointmentId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","v1","auth","login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "let j = {}; try { j = pm.response.json(); } catch(e) {}",
+                  "let t = j.token || (j.data && j.data.token);",
+                  "if (t) { pm.environment.set('token', t); }",
+                  "pm.test('Token captured', function () { pm.expect(!!t).to.be.true; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/auth/register", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nuevo Usuario\",\n  \"email\": \"{{registerEmail}}\",\n  \"password\": \"{{registerPassword}}\"\n}"
+            }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Status 201', function () { pm.response.to.have.status(201); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Get Client by ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/clients/{{clientId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","clients","{{clientId}}"] }
+          }
+        },
+        {
+          "name": "List Clients",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/clients?page=0&size=10&q=Juan", "host": ["{{baseUrl}}"], "path": ["api","v1","clients"], "query": [ {"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"q","value":"Juan"} ] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+              "let j = {}; try { j = pm.response.json(); } catch(e) {}",
+              "let d = j.data || j;",
+              "pm.test('Has meta.total', function(){ pm.expect(d.meta && typeof d.meta.total === 'number').to.be.true; });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Create Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/clients", "host": ["{{baseUrl}}"], "path": ["api","v1","clients"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 0,\n  \"name\": \"Juan Perez\",\n  \"phone\": \"555-1234\",\n  \"email\": \"juan@example.com\",\n  \"notes\": null,\n  \"ownerId\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/clients/{{clientId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","clients","{{clientId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{clientId}},\n  \"name\": \"Juan Mod\",\n  \"phone\": \"555-9999\",\n  \"email\": \"juan.mod@example.com\",\n  \"notes\": \"VIP\",\n  \"ownerId\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Client",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/clients/{{clientId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","clients","{{clientId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "Get Service by ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] }
+          }
+        },
+        {
+          "name": "List Services",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/services?page=0&size=10&q=Corte", "host": ["{{baseUrl}}"], "path": ["api","v1","services"], "query": [ {"key":"page","value":"0"},{"key":"size","value":"10"},{"key":"q","value":"Corte"} ] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "pm.test('Status 200', function(){ pm.response.to.have.status(200); });",
+              "let j = {}; try { j = pm.response.json(); } catch(e) {}",
+              "let d = j.data || j;",
+              "pm.test('Has meta.total', function(){ pm.expect(d.meta && typeof d.meta.total === 'number').to.be.true; });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Create Service",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/services", "host": ["{{baseUrl}}"], "path": ["api","v1","services"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 0,\n  \"name\": \"Corte de cabello\",\n  \"durationMinutes\": 30,\n  \"price\": 10.0,\n  \"description\": null,\n  \"ownerId\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{serviceId}},\n  \"name\": \"Corte Premium\",\n  \"durationMinutes\": 45,\n  \"price\": 15.0,\n  \"description\": \"Incluye lavado\",\n  \"ownerId\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/services/{{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","services","{{serviceId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "Get Appointment by ID",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments","{{appointmentId}}"] }
+          }
+        },
+        {
+          "name": "List by date",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments?date={{date}}", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments"], "query": [ {"key":"date","value":"{{date}}"} ] }
+          }
+        },
+        {
+          "name": "List by range",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments?from=2025-12-01T00:00:00Z&to=2025-12-02T00:00:00Z", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments"], "query": [ {"key":"from","value":"2025-12-01T00:00:00Z"},{"key":"to","value":"2025-12-02T00:00:00Z"} ] }
+          }
+        },
+        {
+          "name": "Availability",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments/availability?date={{date}}&serviceId={{serviceId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments","availability"], "query": [ {"key":"date","value":"{{date}}"},{"key":"serviceId","value":"{{serviceId}}"} ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Status 200', function(){ pm.response.to.have.status(200); });" ] } } ]
+        },
+        {
+          "name": "Update Status",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}/status", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments","{{appointmentId}}","status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"DONE\"\n}" }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('Status 200', function(){ pm.response.to.have.status(200); });" ] } } ]
+        },
+        {
+          "name": "Create Appointment Conflict Test",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments"] },
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 0,\n  \"clientId\": {{clientId}},\n  \"serviceId\": {{serviceId}},\n  \"userId\": 0,\n  \"dateTime\": \"2025-12-01T10:00:00Z\",\n  \"status\": \"SCHEDULED\",\n  \"notes\": \"Overlap 1\"\n}" }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test('201 or 409', function(){ pm.expect([201,409]).to.include(pm.response.code); });" ] } } ]
+        },
+        {
+          "name": "Create Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 0,\n  \"clientId\": {{clientId}},\n  \"serviceId\": {{serviceId}},\n  \"userId\": 0,\n  \"dateTime\": \"2025-12-01T10:00:00Z\",\n  \"status\": \"SCHEDULED\",\n  \"locationLat\": null,\n  \"locationLon\": null,\n  \"photoUrl\": null,\n  \"notes\": \"Demo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments","{{appointmentId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{appointmentId}},\n  \"clientId\": {{clientId}},\n  \"serviceId\": {{serviceId}},\n  \"userId\": 0,\n  \"dateTime\": \"2025-12-01T11:00:00Z\",\n  \"status\": \"SCHEDULED\",\n  \"locationLat\": null,\n  \"locationLon\": null,\n  \"photoUrl\": null,\n  \"notes\": \"Demo mod\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}", "host": ["{{baseUrl}}"], "path": ["api","v1","appointments","{{appointmentId}}"] }
+          }
+        }
+      ]
+    }
+  ]
+}
