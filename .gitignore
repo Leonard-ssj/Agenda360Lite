@@ -1,0 +1,10 @@
+# Internal tooling directory
+.trae/
+
+# Ignore docs except primary README
+docs/*
+!docs/README.md
+
+# Secrets (redundant safeguard; backend module already ignores its .env)
+backend-ktor/.env
+

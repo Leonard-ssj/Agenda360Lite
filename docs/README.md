@@ -1,5 +1,12 @@
 
-# Agenda360 Lite
+# Agenda360 Lite 
+##### - Cliente Servidor
+
+- #### Alumnos: Leonardo Alonso Aldana y Jennifer Rubi Hernandez Carrillo
+- #### Universidad: Universidad Tecnologica de Mexico - UNITEC Campus Sur
+- #### Carrera: Ingeniería en Sistemas Computacionales
+- #### Equipo: 17
+- #### Materia: Aplicaciones Moviles 360
 
 Agenda360 Lite es una solución móvil para gestionar citas y servicios de negocios pequeños. El foco es la experiencia del usuario en Android (Kotlin + Jetpack Compose) y un backend en Ktor (Kotlin) con API REST y autenticación JWT.
 
