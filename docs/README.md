@@ -88,16 +88,4 @@ Envelope de respuesta:
 - Configuración sensible (secretos y conexión) se maneja por variables de entorno en el backend (plantilla en `.env.example`), sin versionar.
 - Manejo global de `401`: se limpia sesión y se regresa a login.
 
-## Pruebas recomendadas
 
-- Login y flujo protegido con JWT.
-- CRUD de clientes y servicios (lista, alta y edición).
-- Citas del día: creación, disponibilidad y cambio de estado.
-
-## Estado actual
-
-- Login + JWT: operativo.
-- Dashboard: métricas y lista del día.
-- Clientes/Servicios: búsqueda, paginación y alta/edición.
-- Citas: disponibilidad, creación y actualización de estado.
-- Próximo: Room, geolocalización y cámara para enriquecer el detalle.
