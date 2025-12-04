@@ -1,6 +1,4 @@
----
-title: Agenda360 Lite
----
+
 # Agenda360 Lite
 
 Agenda360 Lite es una solución móvil para gestionar citas y servicios de negocios pequeños. El foco es la experiencia del usuario en Android (Kotlin + Jetpack Compose) y un backend en Ktor (Kotlin) con API REST y autenticación JWT.
